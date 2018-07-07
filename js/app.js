@@ -5,6 +5,7 @@ const cards = ["fa-diamond","fa-diamond","fa-paper-plane-o","fa-paper-plane-o",
             "fa-anchor","fa-anchor","fa-bolt","fa-bolt","fa-cube","fa-cube",
             "fa-bicycle","fa-bicycle","fa-leaf","fa-leaf","fa-bomb","fa-bomb"];
 let openCards = [];
+let countMoves = 0;
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -38,6 +39,24 @@ let shuffledCards = shuffle(cards);
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+function resetCounter() {
+    let counter = document.querySelector(".moves");
+    counter.innerHTML = 0;
+}
+
+function addCounter() {
+    let counter = document.querySelector(".moves");
+    counter.innerHTML = parseInt(counter.innerHTML) + 1;
+}
+
+function resetCard(card) {
+    let types = card.classList.toString();
+    types.split(" ").map((item,index) => {
+        if (index>0) {
+            card.classList.remove(item);
+        }
+    })
+ }
 
 function setShow(card) {
     card.classList.toggle("show");
@@ -45,69 +64,30 @@ function setShow(card) {
 
 function setOpenOrClose(card) {
     card.classList.toggle("open");
+    setShow(card);
 }
 
 function setError(card) {
     card.classList.toggle("error");
+    setShow(card);
 }
 
 function setMatch(card) {
     setOpenOrClose(card);
-    setShow(card);
     card.classList.toggle("match");
 }
-function clickedCard(elem) {
-    elem.addEventListener('clicked', function (e) {
+function clickedCard(item) {
+    item.addEventListener('click', function (e) {
         e.preventDefault();
-        console.log(e.target);
-        console.log(elem);
-        console.log(this);
-        if (openCard === null) {
-            openCard = elem;
+        let elem = e.target;
+        console.log(openCards)
+        if(openCards.length<2 && elem.classList.contains("match")===false) {
             setOpenOrClose(elem);
+            openCards.push(elem);
+            addCounter();
         }
-
-        if(openCard !== null) {
-            let typeLastCard = openCard.firstChild.classList.toString();
-            let typeNewCard = elem.firstChild.classList.toString();
-            if (typeLastCard === typeNewCard) {
-                setMatch(openCard);
-                setMatch(elem);
-            } else {
-                setOpenOrClose(openCard);
-                setOpenOrClose(elem);
-            }
-            openCard = null;
-        }
-    });
-    return elem;
-}
-
-function checkedCard(elem) {
-    console.log(elem);
-}
-
-function startMemoryGame() {
-    let cards = document.querySelectorAll(".card");
-    cards.forEach(card => card.remove());
-    let deck = document.querySelector(".deck");
-    shuffledCards.map(item => {
-        let icon = document.createElement("i");
-        icon.classList.add("fa");
-        icon.classList.add(item);
-        let card = document.createElement("li");
-        card.classList.add("card");
-        card.appendChild(icon);
-        card.addEventListener('click', function (e) {
-            e.preventDefault();
-            let elem = e.target;
-            console.log(openCards)
-            if(openCards.length<2 && elem.classList.contains("match")===false) {
-                setOpenOrClose(elem);
-                setShow(elem);
-                openCards.push(elem);
-            }
-            if(openCards.length === 2) {
+        if(openCards.length === 2) {
+            setTimeout(()=> {
                 let typeLastCard = openCards[0].firstChild.classList.toString();
                 let typeNewCard = openCards[1].firstChild.classList.toString();
                 if (typeLastCard === typeNewCard) {
@@ -115,24 +95,51 @@ function startMemoryGame() {
                     openCards = [];
                     openCards.length = 0;
                 } else {
-                    setTimeout(()=> {
-                        openCards.map(card => setOpenOrClose(card));
-                        openCards.map(card => setError(card));
-                        console.log(openCards);                        
-                        openCards.map(card => setError(card));
-                        openCards.map(card => setShow(card));
+                    openCards.map(card => {
+                        resetCard(card);
+                        setError(card);
+                    });
+                    setTimeout(() => {
+                        openCards.map(card => {
+                            resetCard(card);
+                        });
                         openCards = [];
                         openCards.length = 0;
-                    },1000);
+                    },400);
                 }
-            }
-            if (openCards.length>2) {
-                console.log(openCards);
-            } 
-        });
-        // clickedCard(card);
-        deck.appendChild(card);
-    })
+            },500);
+        }
+        if (openCards.length>2) {
+            console.log(openCards);
+        } 
+    });
+}
+
+function startGame() {
+    resetCounter();
+    let cards = document.querySelectorAll(".card");
+    cards.forEach(card => card.remove());
+    let deck = document.querySelector(".deck");
+    let fragment = document.createDocumentFragment();
+    shuffledCards.map(item => {
+        let icon = document.createElement("i");
+        icon.classList.add("fa");
+        icon.classList.add(item);
+        let card = document.createElement("li");
+        card.classList.add("card");
+        card.appendChild(icon);
+        clickedCard(card);
+        fragment.appendChild(card);
+    });
+    deck.appendChild(fragment);
+}
+
+function startMemoryGame() {
+    const restart = document.querySelector(".restart");
+    restart.addEventListener('click',function() {
+        startGame();
+    });
+    startGame();
 }
     
 
