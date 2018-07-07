@@ -81,6 +81,12 @@ h1 {
     font-size: 33px;
 }
 
+.deck .card.error {
+    transform: rotateY(0);
+    background: red;
+    cursor: default;
+}
+
 /*
  * Styles for the Score Panel
  */
