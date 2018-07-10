@@ -1,11 +1,16 @@
 /*
  * Create a list that holds all of your cards
  */
-const cards = ["fa-diamond","fa-diamond","fa-paper-plane-o","fa-paper-plane-o",
+const mainCards = ["fa-diamond","fa-diamond","fa-paper-plane-o","fa-paper-plane-o",
             "fa-anchor","fa-anchor","fa-bolt","fa-bolt","fa-cube","fa-cube",
             "fa-bicycle","fa-bicycle","fa-leaf","fa-leaf","fa-bomb","fa-bomb"];
 let openCards = [];
 let countMoves = 0;
+let matchedCards = [];
+const restartGame = function() {
+    startGame();
+};
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -28,7 +33,7 @@ function shuffle(array) {
     return array;
 }
 
-let shuffledCards = shuffle(cards);
+
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
@@ -41,12 +46,14 @@ let shuffledCards = shuffle(cards);
  */
 function resetCounter() {
     let counter = document.querySelector(".moves");
-    counter.innerHTML = 0;
+    countMoves = 0;
+    counter.innerHTML = countMoves;
 }
 
 function addCounter() {
     let counter = document.querySelector(".moves");
-    counter.innerHTML = parseInt(counter.innerHTML) + 1;
+    countMoves += 1;
+    counter.innerHTML = countMoves;
 }
 
 function resetCard(card) {
@@ -59,7 +66,7 @@ function resetCard(card) {
  }
 
 function setShow(card) {
-    card.classList.toggle("show");
+    card.classList.toggle("back");
 }
 
 function setOpenOrClose(card) {
@@ -68,20 +75,35 @@ function setOpenOrClose(card) {
 }
 
 function setError(card) {
-    card.classList.toggle("error");
+    card.classList.add("error","shake","animated");
     setShow(card);
 }
 
 function setMatch(card) {
     setOpenOrClose(card);
-    card.classList.toggle("match");
+    card.classList.add("match","rubberBand","animated");
+    // $("li").removeClass().addClass("card match rubberBand animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    //     $("li").eq(index).removeClass("rubberBand","animated");
+    // });
+        // if ( currentClass === "card" ) {
+        //   console.log("Entrou");
+        //   addedClass = currentClass + "match rubberBand animated";
+        // }
+       
+        // return addedClass;
+    // $().addClass("match","rubberBand","animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    //     $(this).removeClass("rubberBand","animated");
+    //   });
+    
 }
 function clickedCard(item) {
     item.addEventListener('click', function (e) {
         e.preventDefault();
         let elem = e.target;
+        // elem.classList.toggle("flipped");
         console.log(openCards)
         if(openCards.length<2 && elem.classList.contains("match")===false) {
+            // $('#myModal').modal();
             setOpenOrClose(elem);
             openCards.push(elem);
             addCounter();
@@ -91,7 +113,15 @@ function clickedCard(item) {
                 let typeLastCard = openCards[0].firstChild.classList.toString();
                 let typeNewCard = openCards[1].firstChild.classList.toString();
                 if (typeLastCard === typeNewCard) {
-                    openCards.map(card => setMatch(card));
+                    openCards.map(card => {
+                        setMatch(card);
+                        matchedCards.push(card);
+                    });
+                    if (matchedCards.length === mainCards.length) {
+                        setTimeout(() => {
+                            $('#myModal').modal();
+                        },1000);                        
+                    }
                     openCards = [];
                     openCards.length = 0;
                 } else {
@@ -109,6 +139,8 @@ function clickedCard(item) {
                 }
             },500);
         }
+        console.log("Length Matched Cards",matchedCards.length);
+        console.log("Length Main Cards",mainCards.length);
         if (openCards.length>2) {
             console.log(openCards);
         } 
@@ -117,6 +149,7 @@ function clickedCard(item) {
 
 function startGame() {
     resetCounter();
+    let shuffledCards = shuffle(mainCards);
     let cards = document.querySelectorAll(".card");
     cards.forEach(card => card.remove());
     let deck = document.querySelector(".deck");
@@ -134,11 +167,18 @@ function startGame() {
     deck.appendChild(fragment);
 }
 
+// function createModalComponent() {
+//     const divModal = document.createElement("div");
+//     divModal.classList.add("modal")
+// }
+
+
+
 function startMemoryGame() {
+    const btnPlayAgain = document.querySelector("#btnPlayAgain");
+    btnPlayAgain.addEventListener('click', restartGame);
     const restart = document.querySelector(".restart");
-    restart.addEventListener('click',function() {
-        startGame();
-    });
+    restart.addEventListener('click',restartGame);
     startGame();
 }
     
