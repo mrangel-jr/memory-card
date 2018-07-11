@@ -47,24 +47,29 @@ function shuffle(array) {
  */
 function finishedGame() {
     let pText = document.querySelector("#resultFinished");
-    pText.innerHTML = `You won with ${countMoves} and ${countStars} stars.`;
+    let iStars =  parseInt(countStars);
+    pText.innerHTML = `You won with ${countMoves} and ${iStars} ${({countStars}>{iStars} ? 'and a half' : '')} stars.`;
     $('#myModal').modal();
 }
 
 function recalcStars() {
     const stars = document.querySelector(".stars");
-    if ((countStars===3 && countMoves === 21) || (countStars===2 && countMoves === 37))    {
-        stars.children[countStars-1].style.color = 'transparent';
-        countStars -= 1;
+    if ((countStars===3 && countMoves === 21) || (countStars===2 && countMoves === 33) || (countStars===1 && countMoves === 45))    {
+        stars.children[countStars-1].firstElementChild.classList.replace('fa-star','fa-star-half-o');
+        countStars -= 0.5;
+    }
+    if ((parseInt(countStars)===2 && countMoves === 27) || (parseInt(countStars)===1 && countMoves === 39))    {
+        countStars -= 0.5;
+        stars.children[countStars].firstElementChild.classList.replace('fa-star-half-o','fa-star-o');
     }
 }
 
 function resetStars() {
     countStars=3;
     const stars = document.querySelector(".stars");
-    const items = stars.getElementsByTagName("li");
-    for (let i=0;i<items.length;i++) {
-        items[i].style.removeProperty("color");
+    for (star of stars.children) {
+        star.firstElementChild.classList.remove('fa-star-half-o','fa-star-o');
+        star.firstElementChild.classList.add('fa-star');
     }
 }
 
@@ -95,12 +100,17 @@ function resetCard(card) {
     })
  }
 
+ function flipCard(card) {
+    card.classList.toggle("flipped");
+ }
+
 function setShow(card) {
     card.classList.toggle("back");
 }
 
 function setOpenOrClose(card) {
     card.classList.toggle("open");
+    card.classList.toggle("flipped");
     setShow(card);
 }
 
@@ -110,7 +120,7 @@ function setError(card) {
 }
 
 function setMatch(card) {
-    setOpenOrClose(card);
+    // setOpenOrClose(card);
     card.classList.add("match","rubberBand","animated");
     // $("li").removeClass().addClass("card match rubberBand animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
     //     $("li").eq(index).removeClass("rubberBand","animated");
@@ -130,12 +140,15 @@ function clickedCard(item) {
     item.addEventListener('click', function (e) {
         e.preventDefault();
         let elem = e.target;
-        // elem.classList.toggle("flipped");
+        console.log(elem);
         if(openCards.length<2 && elem.classList.contains("match")===false) {
-            setOpenOrClose(elem);
-            openCards.push(elem);
-            addCounter();
-            recalcStars();
+            // flipCard(elem);
+            if (!(openCards.length>0 && openCards[0].id===elem.id)) {
+                setOpenOrClose(elem);
+                openCards.push(elem);
+                addCounter();
+                recalcStars();
+            }
         }
         if(openCards.length === 2) {
             setTimeout(()=> {
@@ -143,6 +156,7 @@ function clickedCard(item) {
                 let typeNewCard = openCards[1].firstChild.classList.toString();
                 if (typeLastCard === typeNewCard) {
                     openCards.map(card => {
+                        resetCard(card);
                         setMatch(card);
                         matchedCards.push(card);
                     });
@@ -178,12 +192,12 @@ function startGame() {
     cards.forEach(card => card.remove());
     let deck = document.querySelector(".deck");
     let fragment = document.createDocumentFragment();
-    shuffledCards.map(item => {
+    shuffledCards.map((item,index) => {
         let icon = document.createElement("i");
-        icon.classList.add("fa");
-        icon.classList.add(item);
+        icon.classList.add("back","fa",item);
         let card = document.createElement("li");
         card.classList.add("card");
+        card.setAttribute("id","card-"+index);
         card.appendChild(icon);
         clickedCard(card);
         fragment.appendChild(card);
