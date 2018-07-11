@@ -7,6 +7,7 @@ const mainCards = ["fa-diamond","fa-diamond","fa-paper-plane-o","fa-paper-plane-
 let openCards = [];
 let countMoves = 0;
 let matchedCards = [];
+let countStars = 3;
 const restartGame = function() {
     startGame();
 };
@@ -44,6 +45,35 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+function finishedGame() {
+    let pText = document.querySelector("#resultFinished");
+    pText.innerHTML = `You won with ${countMoves} and ${countStars} stars.`;
+    $('#myModal').modal();
+}
+
+function recalcStars() {
+    const stars = document.querySelector(".stars");
+    if ((countStars===3 && countMoves === 21) || (countStars===2 && countMoves === 37))    {
+        stars.children[countStars-1].style.color = 'transparent';
+        countStars -= 1;
+    }
+}
+
+function resetStars() {
+    countStars=3;
+    const stars = document.querySelector(".stars");
+    const items = stars.getElementsByTagName("li");
+    for (let i=0;i<items.length;i++) {
+        items[i].style.removeProperty("color");
+    }
+}
+
+function resetMatchedCards() {
+    matchedCards = [];
+    matchedCards.length = 0;
+}
+
+
 function resetCounter() {
     let counter = document.querySelector(".moves");
     countMoves = 0;
@@ -101,12 +131,11 @@ function clickedCard(item) {
         e.preventDefault();
         let elem = e.target;
         // elem.classList.toggle("flipped");
-        console.log(openCards)
         if(openCards.length<2 && elem.classList.contains("match")===false) {
-            // $('#myModal').modal();
             setOpenOrClose(elem);
             openCards.push(elem);
             addCounter();
+            recalcStars();
         }
         if(openCards.length === 2) {
             setTimeout(()=> {
@@ -118,9 +147,7 @@ function clickedCard(item) {
                         matchedCards.push(card);
                     });
                     if (matchedCards.length === mainCards.length) {
-                        setTimeout(() => {
-                            $('#myModal').modal();
-                        },1000);                        
+                        finishedGame();
                     }
                     openCards = [];
                     openCards.length = 0;
@@ -139,16 +166,13 @@ function clickedCard(item) {
                 }
             },500);
         }
-        console.log("Length Matched Cards",matchedCards.length);
-        console.log("Length Main Cards",mainCards.length);
-        if (openCards.length>2) {
-            console.log(openCards);
-        } 
     });
 }
 
 function startGame() {
+    resetStars();
     resetCounter();
+    resetMatchedCards();
     let shuffledCards = shuffle(mainCards);
     let cards = document.querySelectorAll(".card");
     cards.forEach(card => card.remove());
@@ -166,13 +190,6 @@ function startGame() {
     });
     deck.appendChild(fragment);
 }
-
-// function createModalComponent() {
-//     const divModal = document.createElement("div");
-//     divModal.classList.add("modal")
-// }
-
-
 
 function startMemoryGame() {
     const btnPlayAgain = document.querySelector("#btnPlayAgain");
