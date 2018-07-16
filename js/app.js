@@ -127,20 +127,20 @@ function setOpenOrClose(card) {
         $(card).removeClass("open","flip","animated");
     } else {
         $(card).addClass("open flip animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-            $(card).removeClass("flip","animated");
+            $(card).removeClass("flip animated");
         });
     }
 }
 
 function setError(card) {
-    $(card).addClass("error","flip","animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-        $(card).removeClass("error","flip","animated");
+    $(card).addClass("error shake animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+        $(card).removeClass("error shake animated");
     });
 }
 
 function setMatch(card) {
-    $(card).addClass("match","rubberBand","animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-        $(card).removeClass("rubberBand","animated");
+    $(card).addClass("match rubberBand animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+        $(card).removeClass("rubberBand animated");
     });
 }
 

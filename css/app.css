@@ -21,6 +21,19 @@ body {
     font-family: 'Coda', cursive;
 }
 
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    /* margin-right: auto; */
+    /* margin-left: auto; */
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    /* align-content: center; */
+    /* align-self: center; */
+    flex-direction: column;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -31,6 +44,7 @@ body {
 h1 {
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
+    text-align: center;
 }
 
 /*
@@ -72,10 +86,6 @@ h1 {
     font-size: 33px;
 }
 
-/* .deck .card.back {
-    font-size: 33px;
-} */
-
 .deck .card.match {
     cursor: default;
     background: #02ccba;
@@ -88,13 +98,6 @@ h1 {
     cursor: default;
     font-size: 33px;
 }
-
-/* .deck .card.flipped {
-    -webkit-transform: rotateY( -180deg );
-    -moz-transform: rotateY( -180deg );
-    -o-transform: rotateY( -180deg );
-    transform: rotateY( -180deg );
-} */
 
 /*
  * Styles for the Score Panel
@@ -208,6 +211,54 @@ h1 {
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
 }
+
+@media screen and (max-width: 672px) {
+    .deck .card {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+    }
+    .deck {
+        width: 550px;
+        height: 550px;
+        min-height: 550px;
+    }
+}
+
+
+@media screen and (max-width: 572px) {
+    .deck .card {
+        width: 80px;
+        height: 80px;
+        margin: 0;
+    }
+    .deck {
+        width: 400px;
+        height: 400px;
+        min-height: 400px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 412px) {
+    .deck .card {
+        width: 60px;
+        height: 60px;
+        margin: 0;
+    }
+    .deck {
+        width: 300px;
+        height: 300px;
+        min-height: 300px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    .score-panel {
+        width: 100%;
+    }
+}
+
 
 @keyframes stroke {
     100% {
