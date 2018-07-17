@@ -57,7 +57,7 @@ function finishedGame() {
     let pText = document.querySelector("#resultFinished");
     let iStars =  parseInt(countStars);
     let middle = countStars > iStars ? 'and a half' : '';
-    pText.innerHTML = `You won with ${countMoves} and ${iStars} ${middle} stars in ${timer.getTimeValues().toString()}.`;
+    pText.innerHTML = `You won with ${countMoves} moves and ${iStars} ${middle} stars in ${timer.getTimeValues().toString()}.`;
     $('#myModal').modal();
 }
 
@@ -66,7 +66,7 @@ function finishedGame() {
  */
 function recalcStars() {
     const stars = document.querySelector(".stars");
-    if ((countStars===3 && countMoves === 11) || (countStars===2 && countMoves === 17) || (countStars===1 && countMoves === 23))    {
+    if ((countStars===3 && countMoves === 11) || (countStars===2 && countMoves === 17) )    {
         stars.children[countStars-1].firstElementChild.classList.replace('fa-star','fa-star-half-o');
         countStars -= 0.5;
     }
@@ -98,6 +98,8 @@ function resetStars() {
 function resetMatchedCards() {
     matchedCards = [];
     matchedCards.length = 0;
+    openCards = [];
+    openCards.length = 0;
 }
 
 function resetTimer() {
